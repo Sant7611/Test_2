@@ -1,17 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
+import { fetchPostByUserId } from "@/lib/api/posts";
+import { useStore } from "@/lib/store/postStore";
+import { navigate } from "next/dist/client/components/segment-cache/navigation";
+import Link from "next/dist/client/link";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 type Post = {
   id: number;
   title: string;
+  userId: number;
   body: string;
 };
 
 const Page = () => {
   const [show, setShow] = useState(false);
-  const [posts, setPosts] = useState<Post[]>([]);
   const [formData, setFormData] = useState({ title: "", body: "" });
+  const { getPost, setPost } = useStore();
+  const searchParams = useParams();
+  const userId = searchParams.id;
+  const navigate = useRouter();
+
+  console.log(userId);
+  useEffect(() => {
+    async function fetchPosts() {
+      const response = await fetchPostByUserId(Number(userId));
+
+      setPost([...getPost(), ...response.data]);
+      console.log(response.data);
+    }
+
+    fetchPosts();
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,11 +40,12 @@ const Page = () => {
 
     const newPost: Post = {
       id: Date.now(),
+      userId: Number(userId),
       title: formData.title,
       body: formData.body,
     };
 
-    setPosts((prev) => [...prev, newPost]);
+    setPost([...getPost(), newPost]);
     setFormData({ title: "", body: "" });
     setShow(false);
   };
@@ -31,7 +53,7 @@ const Page = () => {
   return (
     <div className="bg-white min-h-screen">
       <div className="w-[80%] mx-auto py-5 text-black">
-        <h1 className="font-bold text-3xl bg-white text-black">Dashboard</h1>
+       
         {!show && (
           <div
             onClick={() => setShow(true)}
@@ -92,13 +114,13 @@ const Page = () => {
         )}
 
         <div className="flex gap-3 flex-col">
-          {posts.length === 0 ? (
+          {getPost().length === 0 ? (
             <p>No posts yet.</p>
           ) : (
-            posts.map((post) => (
+            getPost().map((post) => (
               <div key={post.id} className="border px-3 py-4 rounded-xl">
-                <h1>{post.title}</h1>
-                <p>{post.body}</p>
+                <h1 className="text-lg font-semibold ">{post.title}</h1>
+                <p className="text-sm">{post.body}</p>
               </div>
             ))
           )}

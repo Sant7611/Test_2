@@ -4,7 +4,6 @@ import { LoadingState } from "@/components/loading";
 import UserCard from "@/components/UserCard";
 import { fetchUsers } from "@/lib/api/users";
 import { User } from "@/lib/types";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Page() {
@@ -12,7 +11,6 @@ export default function Page() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useRouter();
 
   async function fetchData() {
     const data = await fetchUsers();
@@ -60,13 +58,6 @@ export default function Page() {
   return (
     <div className="bg-white min-h-screen">
       <div className="w-[80%] mx-auto py-5 text-black">
-        <h1
-          className="font-bold text-3xl cursor-pointer"
-          onClick={() => navigate.push("/")}
-        >
-          Dashboard
-        </h1>
-
         <div className="w-full my-4">
           <input
             type="text"
