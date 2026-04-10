@@ -68,9 +68,10 @@ export default function Page() {
           />
         </div>
 
-        <div className="flex gap-12 flex-wrap">
+        <div className="grid lg:grid-cols-3 grid-cols-1 md:grid-cols-2 gap-4">
           {users.map((user) => (
             <UserCard
+              id={user.id}
               key={user.id}
               name={user.name}
               email={user.email}

@@ -4,7 +4,7 @@ import { fetchPostByUserId } from "@/lib/api/posts";
 import { useStore } from "@/lib/store/postStore";
 import { navigate } from "next/dist/client/components/segment-cache/navigation";
 import Link from "next/dist/client/link";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 type Post = {
@@ -117,8 +117,8 @@ const Page = () => {
           {getPost().length === 0 ? (
             <p>No posts yet.</p>
           ) : (
-            getPost().map((post) => (
-              <div key={post.id} className="border px-3 py-4 rounded-xl">
+            getPost().map((post, index) => (
+              <div key={index} className="border px-3 py-4 rounded-xl">
                 <h1 className="text-lg font-semibold ">{post.title}</h1>
                 <p className="text-sm">{post.body}</p>
               </div>
