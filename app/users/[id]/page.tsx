@@ -1,11 +1,12 @@
 "use client";
 
 import { fetchPostByUserId } from "@/lib/api/posts";
+import { FormData, formSchema } from "@/lib/schemas/formSchema";
 import { useStore } from "@/lib/store/postStore";
-import { navigate } from "next/dist/client/components/segment-cache/navigation";
-import Link from "next/dist/client/link";
-import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
 type Post = {
   id: number;
@@ -16,44 +17,47 @@ type Post = {
 
 const Page = () => {
   const [show, setShow] = useState(false);
-  const [formData, setFormData] = useState({ title: "", body: "" });
+  // const [formData, setFormData] = useState({ title: "", body: "" });
   const { getPost, setPost } = useStore();
   const searchParams = useParams();
-  const userId = searchParams.id;
-  const navigate = useRouter();
+  const userId = Number(searchParams.id);
 
-  console.log(userId);
   useEffect(() => {
     async function fetchPosts() {
-      const response = await fetchPostByUserId(Number(userId));
+      const response = await fetchPostByUserId(userId);
 
       setPost([...getPost(), ...response.data]);
-      console.log(response.data);
     }
 
     fetchPosts();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.title || !formData.body) return;
-
+  function onSubmit(data: FormData) {
     const newPost: Post = {
       id: Date.now(),
       userId: Number(userId),
-      title: formData.title,
-      body: formData.body,
+      title: data.title,
+      body: data.body,
     };
 
     setPost([...getPost(), newPost]);
-    setFormData({ title: "", body: "" });
     setShow(false);
-  };
+    reset();
+  }
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    mode: "onChange",
+  });
 
   return (
     <div className="bg-white min-h-screen">
       <div className="w-[80%] mx-auto py-5 text-black">
-       
         {!show && (
           <div
             onClick={() => setShow(true)}
@@ -65,34 +69,34 @@ const Page = () => {
 
         {show && (
           <form
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(onSubmit)}
             className="space-y-4 border  my-5 rounded-lg p-4 bg-card"
           >
             <div className="space-y-2">
               <label htmlFor="title">Title</label>
               <input
                 id="title"
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
+                {...register("title")}
                 placeholder="Post title..."
                 className="w-full border p-3"
               />
+              {errors.title && (
+                <p className="text-red-500">{errors.title.message}</p>
+              )}
             </div>
 
             <div className="space-y-2">
               <label htmlFor="body">Body</label>
               <textarea
                 id="body"
-                value={formData.body}
-                onChange={(e) =>
-                  setFormData({ ...formData, body: e.target.value })
-                }
+                {...register("body")}
                 placeholder="Post body..."
                 rows={4}
                 className="w-full border p-3"
               />
+              {errors.body && (
+                <p className="text-red-500">{errors.body.message}</p>
+              )}
             </div>
 
             <div className="flex gap-2">
