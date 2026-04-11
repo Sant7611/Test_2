@@ -9,7 +9,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <div className=" w-[80%] mx-auto pt-5 " >
         <h1
           className="font-bold text-3xl cursor-pointer text-black"
-          onClick={() => router.push("/users")}
+          onClick={() => router.push("/")}
         >
           Dashboard
         </h1>

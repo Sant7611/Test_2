@@ -32,7 +32,7 @@ export default function UserCard({
       </p>
 
       <button
-        onClick={() => router.push(`/users/${id}`)}
+        onClick={() => router.push(`/${id}`)}
         className="mt-3 bg-black text-white py-2 rounded-lg text-sm hover:bg-gray-800 transition"
       >
         View Posts
