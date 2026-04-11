@@ -15,6 +15,6 @@ type Store = {
 export const useStore = create<Store>((set, get) => ({
   posts: [],
   setPost: (post: Post[]) =>
-    set((state) => ({ posts: [...state.posts, ...post] })),
+    set(() => ({ posts: post })),
   getPost: () => get().posts,
 }));

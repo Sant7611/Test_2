@@ -26,7 +26,8 @@ const Page = () => {
     async function fetchPosts() {
       const response = await fetchPostByUserId(userId);
 
-      setPost([...getPost(), ...response.data]);
+      // setPost([...getPost(), ...response.data]);
+      setPost(response.data);
     }
 
     fetchPosts();
